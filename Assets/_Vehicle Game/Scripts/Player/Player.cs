@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 using Zenject;
 
 public class Player : MonoBehaviour

@@ -1,22 +1,23 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 using Zenject;
 
 public class Bullet : MonoBehaviour
 {
     [SerializeField, Min(0f)] private float _speed = 30f;
     [SerializeField, Min(1)] private int _damage = 10;
-    [SerializeField, Min(0.01f)] private float _lifeTime = 3f;
+    [FormerlySerializedAs("_lifeTime"), SerializeField, Min(0.01f)] private float _lifetime = 3f;
     [SerializeField, Min(0.01f)] private float _hitRadius = 0.1f;
 
     private readonly RaycastHit[] _hits = new RaycastHit[16];
     private Pool _pool;
     private float _expiresAt;
-    private bool _released;
+    private bool _isReleased;
 
     private void OnEnable()
     {
-        _released = false;
-        _expiresAt = Time.time + _lifeTime;
+        _isReleased = false;
+        _expiresAt = Time.time + _lifetime;
     }
 
     private void Update()
@@ -59,7 +60,7 @@ public class Bullet : MonoBehaviour
 
     private void Hit(Enemy enemy)
     {
-        if (_released || enemy.Health == null || enemy.Health.IsDead)
+        if (_isReleased || enemy.Health == null || enemy.Health.IsDead)
             return;
         enemy.Health.TakeDamage(_damage);
         Despawn();
@@ -67,9 +68,9 @@ public class Bullet : MonoBehaviour
 
     private void Despawn()
     {
-        if (_released)
+        if (_isReleased)
             return;
-        _released = true;
+        _isReleased = true;
         if (_pool != null)
             _pool.Despawn(this);
         else

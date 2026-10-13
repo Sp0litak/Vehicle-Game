@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
     private bool[] _kinematicStates;
     private Animator[] _animators;
     private bool[] _animatorStates;
-    private bool _released;
+    private bool _isReleased;
 
     public Health Health { get; private set; }
 
@@ -39,7 +39,7 @@ public class Enemy : MonoBehaviour
 
     private void OnEnable()
     {
-        _released = false;
+        _isReleased = false;
         _deathAnimation.ResetState();
         for (int i = 0; i < _colliders.Length; i++)
             _colliders[i].enabled = _colliderStates[i];
@@ -62,7 +62,7 @@ public class Enemy : MonoBehaviour
             }
         }
         Health = new Health(_maxHealth);
-        Health.OnDeath += HandleDeath;
+        Health.Died += HandleDeath;
         if (_healthView != null)
         {
             _healthView.gameObject.SetActive(true);
@@ -85,9 +85,9 @@ public class Enemy : MonoBehaviour
 
     public void Despawn()
     {
-        if (_released)
+        if (_isReleased)
             return;
-        _released = true;
+        _isReleased = true;
         if (_pool != null)
             _pool.Despawn(this);
         else
@@ -97,7 +97,7 @@ public class Enemy : MonoBehaviour
     private void OnDisable()
     {
         if (Health != null)
-            Health.OnDeath -= HandleDeath;
+            Health.Died -= HandleDeath;
     }
 
     public class Pool : MonoMemoryPool<Vector3, Quaternion, Enemy>

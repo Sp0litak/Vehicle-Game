@@ -1,6 +1,7 @@
 
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
 using Zenject;
 
@@ -12,7 +13,7 @@ public class TurretController : MonoBehaviour
     [SerializeField] private float _maxAngle = 90f;
     [Inject] private Bullet.Pool _bulletPool;
     [SerializeField] private Transform _muzzle;
-    [SerializeField] private float _fireRate = 0.2f;
+    [FormerlySerializedAs("_fireRate"), SerializeField] private float _fireInterval = 0.2f;
 
     private float _nextFireTime;
     private float _currentAngle;
@@ -64,7 +65,7 @@ public class TurretController : MonoBehaviour
         if (Time.time < _nextFireTime)
             return;
 
-        _nextFireTime = Time.time + _fireRate;
+        _nextFireTime = Time.time + _fireInterval;
 
         _bulletPool.Spawn(_muzzle.position, _muzzle.rotation);
         ShotFired?.Invoke();

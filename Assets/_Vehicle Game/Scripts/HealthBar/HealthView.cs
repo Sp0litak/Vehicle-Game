@@ -10,7 +10,7 @@ public class HealthView : MonoBehaviour
     public void Bind(Health health)
     {
         if (_health != null)
-            _health.OnHealthChanged -= UpdateHealth;
+            _health.HealthChanged -= UpdateHealth;
 
         _health = health;
 
@@ -18,7 +18,7 @@ public class HealthView : MonoBehaviour
         _slider.maxValue = health.MaxHealth;
         _slider.value = health.CurrentHealth;
 
-        health.OnHealthChanged += UpdateHealth;
+        health.HealthChanged += UpdateHealth;
     }
 
     private void UpdateHealth(int currentHealth)
@@ -29,6 +29,6 @@ public class HealthView : MonoBehaviour
     private void OnDestroy()
     {
         if (_health != null)
-            _health.OnHealthChanged -= UpdateHealth;
+            _health.HealthChanged -= UpdateHealth;
     }
 }

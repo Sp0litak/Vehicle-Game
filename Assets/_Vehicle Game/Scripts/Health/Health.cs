@@ -4,8 +4,8 @@ public class Health
 {
     public int MaxHealth { get; protected set; }
     public int CurrentHealth { get; protected set; }
-    public event Action<int> OnHealthChanged;
-    public event Action OnDeath;
+    public event Action<int> HealthChanged;
+    public event Action Died;
     public bool IsDead => CurrentHealth == 0;
 
     public Health(int maxHealth)
@@ -21,8 +21,8 @@ public class Health
         if (damage <= 0 || IsDead)
             return;
         CurrentHealth = Math.Max(0, CurrentHealth - damage);
-        OnHealthChanged?.Invoke(CurrentHealth);
+        HealthChanged?.Invoke(CurrentHealth);
         if (IsDead)
-            OnDeath?.Invoke();
+            Died?.Invoke();
     }
 }
