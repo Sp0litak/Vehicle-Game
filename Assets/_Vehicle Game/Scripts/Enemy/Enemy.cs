@@ -11,5 +11,6 @@ public class Enemy : MonoBehaviour
     {
         Health = new Health(_maxHealth);
         _healthView.Bind(Health);
+        Health.OnDeath += () => Destroy(gameObject);
     }
 }

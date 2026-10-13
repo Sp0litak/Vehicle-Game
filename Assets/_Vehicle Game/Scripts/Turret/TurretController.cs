@@ -7,14 +7,15 @@ public class TurretController : MonoBehaviour
     [SerializeField] private float _rotationSpeed = 120f;
     [SerializeField] private float _minAngle = -90f;
     [SerializeField] private float _maxAngle = 90f;
-    [SerializeField] private float cooldown = 1f;
     [SerializeField] private GameObject _bulletPrefab;
     [SerializeField] private Transform _muzzle;
+    [SerializeField] private float _fireRate = 0.2f;
 
+    private float _nextFireTime;
     private float _currentAngle;
     private Vector2 _lastPointerPosition;
     private bool _isDragging;
-    private float _lastShootTime;
+
 
     private void Update()
     {
@@ -57,9 +58,15 @@ public class TurretController : MonoBehaviour
 
     private void Shoot()
     {
-        if (Time.time - _lastShootTime < cooldown)
+        if (Time.time < _nextFireTime)
             return;
 
-        _lastShootTime = Time.time;
+        _nextFireTime = Time.time + _fireRate;
+
+        Instantiate(
+            _bulletPrefab,
+            _muzzle.position,
+            _muzzle.rotation
+        );
     }
 }

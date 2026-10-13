@@ -3,10 +3,17 @@ using UnityEngine;
 public class CarMovement : MonoBehaviour
 {
     [SerializeField] private float _speed = 10f;
-    [SerializeField] private Rigidbody _rigidbody;
+    [SerializeField] private Transform _finish;
 
     private void FixedUpdate()
     {
-        _rigidbody.linearVelocity = transform.forward * _speed;
+        if (_finish == null)
+            return;
+
+        transform.position = Vector3.MoveTowards(
+            transform.position,
+            _finish.position,
+            _speed * Time.fixedDeltaTime
+        );
     }
 }
