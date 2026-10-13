@@ -5,6 +5,8 @@ public class CarMovement : MonoBehaviour
     [SerializeField] private float _speed = 10f;
     [SerializeField] private Transform _finish;
 
+    public Transform Finish => _finish;
+
     private void FixedUpdate()
     {
         if (_finish == null)

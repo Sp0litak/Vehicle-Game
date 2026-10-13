@@ -71,7 +71,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
   m_Navigation:
     m_Mode: 3
@@ -296,7 +296,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a4353b59cbdc70449b8dac514dd0e81, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Billboard
   _camera: {fileID: 0}
 --- !u!114 &3828256862825816309
@@ -309,7 +309,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ad9b60e036387c4184efe5347d60cab, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::HealthView
   _slider: {fileID: 262227081457147594}
 --- !u!1 &7107098767867253536
@@ -367,7 +367,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -492,6 +492,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49d2d3d1c23a2ec4284153f301976529, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8524257761659890814}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 49d2d3d1c23a2ec4284153f301976529, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 900000000000000001}
   m_SourcePrefab: {fileID: 100100000, guid: 49d2d3d1c23a2ec4284153f301976529, type: 3}
 --- !u!1 &518784104875911629 stripped
 GameObject:
@@ -508,12 +511,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41a9234d4ca964d419fe20f72e9d397e, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::TurretController
-  _rotationSpeed: 120
+  _dragSensitivity: 0.2
   _minAngle: -90
   _maxAngle: 90
-  _bulletPrefab: {fileID: 1424154408456304328, guid: ea4adb20dbab79b488dfdd37922242a9, type: 3}
   _muzzle: {fileID: 3899399818893643928}
   _fireRate: 0.2
 --- !u!4 &898687794255180663 stripped
@@ -629,7 +631,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 06a415ca355d8e442ab09b5201a21c59, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::CarMovement
   _speed: 4
   _finish: {fileID: 0}
@@ -664,5 +666,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5b245caa3f84a85489ccee474bcb86a3, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::Player
+
+--- !u!114 &900000000000000001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 518784104875911629}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4eca239ca77455983d223efc88e644a, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TurretRecoilAnimation
+  _turret: {fileID: 8524257761659890814}
+  _target: {fileID: 898687794255180663}
+  _distance: 0.12
+  _kickDuration: 0.045
+  _returnDuration: 0.12

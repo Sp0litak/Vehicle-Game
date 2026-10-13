@@ -1,13 +1,16 @@
 
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public class TurretController : MonoBehaviour
 {
-    [SerializeField] private float _rotationSpeed = 120f;
+    public event Action ShotFired;
+    [SerializeField, Min(0f)] private float _dragSensitivity = 0.2f;
     [SerializeField] private float _minAngle = -90f;
     [SerializeField] private float _maxAngle = 90f;
-    [SerializeField] private GameObject _bulletPrefab;
+    [Inject] private Bullet.Pool _bulletPool;
     [SerializeField] private Transform _muzzle;
     [SerializeField] private float _fireRate = 0.2f;
 
@@ -37,11 +40,11 @@ public class TurretController : MonoBehaviour
             _isDragging = true;
         }
 
-        if (_isDragging && !released)
+        if (_isDragging && Pointer.current.press.isPressed)
         {
             float deltaX = pointerPosition.x - _lastPointerPosition.x;
 
-            _currentAngle += deltaX * _rotationSpeed * Time.deltaTime / 10f;
+            _currentAngle += deltaX * _dragSensitivity;
             _currentAngle = Mathf.Clamp(
                 _currentAngle, _minAngle, _maxAngle);
 
@@ -52,7 +55,7 @@ public class TurretController : MonoBehaviour
             Shoot();
         }
 
-        if (released)
+        if (released || !Pointer.current.press.isPressed)
             _isDragging = false;
     }
 
@@ -63,10 +66,7 @@ public class TurretController : MonoBehaviour
 
         _nextFireTime = Time.time + _fireRate;
 
-        Instantiate(
-            _bulletPrefab,
-            _muzzle.position,
-            _muzzle.rotation
-        );
+        _bulletPool.Spawn(_muzzle.position, _muzzle.rotation);
+        ShotFired?.Invoke();
     }
 }
