@@ -1,8 +1,10 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using Zenject;
 
 public class Player : MonoBehaviour
 {
-    public Vector3 Position => transform.position;
+    [Inject] private Health _playerHealth;
 
+    public Vector3 Position => transform.position;
 }
