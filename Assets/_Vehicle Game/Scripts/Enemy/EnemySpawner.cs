@@ -120,7 +120,6 @@ public class EnemySpawner : MonoBehaviour
         float spread = Random.Range(1f, 4f);
         float groupWidth = Random.Range(0.5f, 1f) * _roadHalfWidth;
         float groupCenter = Random.Range(-_roadHalfWidth + groupWidth, _roadHalfWidth - groupWidth);
-        Quaternion rotation = Quaternion.LookRotation(-_routeDirection);
 
         for (int i = 0; i < enemyCount; i++)
         {
@@ -131,7 +130,10 @@ public class EnemySpawner : MonoBehaviour
 
             if (distance < _routeLength - 8f
                 && _navigation.TryGetPosition(position, out Vector3 spawnPosition))
+            {
+                Quaternion rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
                 _activeEnemies.Add(_pool.Spawn(spawnPosition, rotation));
+            }
 
             distance += Random.Range(1f, spread);
         }

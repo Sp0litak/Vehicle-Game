@@ -8,11 +8,13 @@ public class Bullet : MonoBehaviour
     [SerializeField, Min(1)] private int _damage = 10;
     [FormerlySerializedAs("_lifeTime"), SerializeField, Min(0.01f)] private float _lifetime = 3f;
     [SerializeField, Min(0.01f)] private float _hitRadius = 0.1f;
+    [SerializeField] private Vector3 _modelRotationOffset;
 
     private readonly RaycastHit[] _hits = new RaycastHit[16];
     private Pool _pool;
     private GameController _game;
     private float _expiresAt;
+    private Vector3 _direction;
 
     [Inject]
     public void Construct(GameController game)
@@ -22,7 +24,8 @@ public class Bullet : MonoBehaviour
 
     public void Initialize(Vector3 position, Quaternion rotation)
     {
-        transform.SetPositionAndRotation(position, rotation);
+        _direction = rotation * Vector3.forward;
+        transform.SetPositionAndRotation(position, rotation * Quaternion.Euler(_modelRotationOffset));
         _expiresAt = Time.time + _lifetime;
         gameObject.SetActive(true);
     }
@@ -47,13 +50,13 @@ public class Bullet : MonoBehaviour
             return;
         }
 
-        transform.position += transform.forward * distance;
+        transform.position += _direction * distance;
     }
 
     private Enemy FindTarget(float distance)
     {
         int count = Physics.SphereCastNonAlloc(transform.position, _hitRadius,
-            transform.forward, _hits, distance, Physics.DefaultRaycastLayers,
+            _direction, _hits, distance, Physics.DefaultRaycastLayers,
             QueryTriggerInteraction.Collide);
 
         Enemy closestEnemy = null;
