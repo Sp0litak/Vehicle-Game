@@ -5246,6 +5246,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3899399818893643928}
+  - component: {fileID: 114000000000000077}
   m_Layer: 0
   m_Name: BulletSpawner
   m_TagString: Untagged
@@ -5575,3 +5576,19 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 84
   m_CollisionDetection: 2
+--- !u!114 &114000000000000077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8924777638895867420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca908f4320764fc1b31349516f721c02, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::TurretLaser
+  _shader: {fileID: 4800000, guid: 9c63a193962d4c0fb18cc42d2f547f4f, type: 3}
+  _color: {r: 1, g: 0.1, b: 0.1, a: 0.7}
+  _length: 30
+  _width: 0.025
