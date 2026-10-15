@@ -1,63 +1,60 @@
-
 using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using Zenject;
 
 public class TurretController : MonoBehaviour
 {
-    public event Action ShotFired;
+    [SerializeField] private Transform _muzzle;
     [SerializeField, Min(0f)] private float _dragSensitivity = 0.2f;
     [SerializeField] private float _minAngle = -90f;
     [SerializeField] private float _maxAngle = 90f;
-    [Inject] private Bullet.Pool _bulletPool;
-    [SerializeField] private Transform _muzzle;
-    [FormerlySerializedAs("_fireRate"), SerializeField] private float _fireInterval = 0.2f;
+    [FormerlySerializedAs("_fireRate"), SerializeField, Min(0.01f)] private float _fireInterval = 0.2f;
 
+    private Bullet.Pool _bulletPool;
+    private GameController _game;
     private float _nextFireTime;
     private float _currentAngle;
     private Vector2 _lastPointerPosition;
-    private bool _isDragging;
 
+    public event Action ShotFired;
+
+    [Inject]
+    public void Initialize(Bullet.Pool bulletPool, GameController game)
+    {
+        _bulletPool = bulletPool;
+        _game = game;
+    }
 
     private void Update()
     {
+        if (!_game.IsPlaying || Pointer.current == null)
+            return;
+
         HandleInput();
     }
 
     private void HandleInput()
     {
-        if (Pointer.current == null)
+        if (!Pointer.current.press.isPressed)
             return;
 
-        bool pressed = Pointer.current.press.wasPressedThisFrame;
-        bool released = Pointer.current.press.wasReleasedThisFrame;
-        Vector2 pointerPosition = Pointer.current.position.ReadValue();
+        Vector2 position = Pointer.current.position.ReadValue();
+        if (Pointer.current.press.wasPressedThisFrame)
+            _lastPointerPosition = position;
 
-        if (pressed)
-        {
-            _lastPointerPosition = pointerPosition;
-            _isDragging = true;
-        }
+        Rotate(position.x - _lastPointerPosition.x);
+        _lastPointerPosition = position;
+        Shoot();
+    }
 
-        if (_isDragging && Pointer.current.press.isPressed)
-        {
-            float deltaX = pointerPosition.x - _lastPointerPosition.x;
+    private void Rotate(float delta)
+    {
+        _currentAngle = Mathf.Clamp(
+            _currentAngle + delta * _dragSensitivity, _minAngle, _maxAngle);
 
-            _currentAngle += deltaX * _dragSensitivity;
-            _currentAngle = Mathf.Clamp(
-                _currentAngle, _minAngle, _maxAngle);
-
-            transform.localRotation =
-                Quaternion.Euler(0f, _currentAngle, 0f);
-
-            _lastPointerPosition = pointerPosition;
-            Shoot();
-        }
-
-        if (released || !Pointer.current.press.isPressed)
-            _isDragging = false;
+        transform.localRotation = Quaternion.Euler(0f, _currentAngle, 0f);
     }
 
     private void Shoot()
@@ -66,7 +63,6 @@ public class TurretController : MonoBehaviour
             return;
 
         _nextFireTime = Time.time + _fireInterval;
-
         _bulletPool.Spawn(_muzzle.position, _muzzle.rotation);
         ShotFired?.Invoke();
     }

@@ -489,6 +489,9 @@ PrefabInstance:
       addedObject: {fileID: 490568518536018400}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 900000000000000003}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 5977019355740914780}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       insertIndex: -1
@@ -562,9 +565,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 3336473483477936140}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eac82a5c431a1e54eb12f919056858f6, type: 3}
+  m_Script: {fileID: 11500000, guid: 576f9c31f2564d049fe080b045fda27a, type: 3}
   m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::Stickman
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
+  _attackDistance: 1.5
+  _attackDamage: 10
+  _attackInterval: 2.6333334
 --- !u!114 &5977019355740914780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -602,8 +608,8 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 1
   m_Constraints: 80
   m_CollisionDetection: 1
@@ -644,3 +650,26 @@ MonoBehaviour:
   _holdDuration: 0.15
   _shrinkDuration: 0.25
   _fallRotation: {x: 90, y: 0, z: 0}
+
+--- !u!195 &900000000000000003
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3336473483477936140}
+  m_Enabled: 0
+  m_AgentTypeID: 0
+  m_Radius: 0.4
+  m_Speed: 6
+  m_Acceleration: 20
+  avoidancePriority: 50
+  m_AngularSpeed: 360
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.8
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class CarMovement : MonoBehaviour
@@ -6,16 +7,37 @@ public class CarMovement : MonoBehaviour
     [SerializeField] private Transform _finish;
 
     public Transform Finish => _finish;
+    public bool IsMoving { get; private set; }
+
+    public event Action Finished;
+
+    public void StartMoving()
+    {
+        IsMoving = true;
+    }
+
+    public void StopMoving()
+    {
+        IsMoving = false;
+    }
 
     private void FixedUpdate()
     {
-        if (_finish == null)
+        if (!IsMoving || _finish == null)
             return;
 
+        Move();
+    }
+
+    private void Move()
+    {
         transform.position = Vector3.MoveTowards(
-            transform.position,
-            _finish.position,
-            _speed * Time.fixedDeltaTime
-        );
+            transform.position, _finish.position, _speed * Time.fixedDeltaTime);
+
+        if (transform.position != _finish.position)
+            return;
+
+        StopMoving();
+        Finished?.Invoke();
     }
 }

@@ -11,48 +11,72 @@ public class Bullet : MonoBehaviour
 
     private readonly RaycastHit[] _hits = new RaycastHit[16];
     private Pool _pool;
+    private GameController _game;
     private float _expiresAt;
-    private bool _isReleased;
 
-    private void OnEnable()
+    [Inject]
+    public void Construct(GameController game)
     {
-        _isReleased = false;
+        _game = game;
+    }
+
+    public void Initialize(Vector3 position, Quaternion rotation)
+    {
+        transform.SetPositionAndRotation(position, rotation);
         _expiresAt = Time.time + _lifetime;
+        gameObject.SetActive(true);
     }
 
     private void Update()
     {
+        if (!_game.IsPlaying)
+            return;
+
         if (Time.time >= _expiresAt)
         {
             Despawn();
             return;
         }
+
         float distance = _speed * Time.deltaTime;
+        Enemy enemy = FindTarget(distance);
+
+        if (enemy != null)
+        {
+            Hit(enemy);
+            return;
+        }
+
+        transform.position += transform.forward * distance;
+    }
+
+    private Enemy FindTarget(float distance)
+    {
         int count = Physics.SphereCastNonAlloc(transform.position, _hitRadius,
             transform.forward, _hits, distance, Physics.DefaultRaycastLayers,
-            QueryTriggerInteraction.Collide);
+            QueryTriggerInteraction.Ignore);
+
         Enemy closestEnemy = null;
         float closestDistance = float.MaxValue;
+
         for (int i = 0; i < count; i++)
         {
             Enemy enemy = _hits[i].collider.GetComponentInParent<Enemy>();
-            if (enemy != null && enemy.Health != null && !enemy.Health.IsDead
-                && _hits[i].distance < closestDistance)
-            {
-                closestEnemy = enemy;
-                closestDistance = _hits[i].distance;
-            }
+            if (enemy == null || enemy.IsDead || _hits[i].distance >= closestDistance)
+                continue;
+
+            closestEnemy = enemy;
+            closestDistance = _hits[i].distance;
         }
-        if (closestEnemy != null)
-        {
-            Hit(closestEnemy);
-            return;
-        }
-        transform.position += transform.forward * distance;
+
+        return closestEnemy;
     }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.isTrigger)
+            return;
+
         Enemy enemy = other.GetComponentInParent<Enemy>();
         if (enemy != null)
             Hit(enemy);
@@ -60,37 +84,37 @@ public class Bullet : MonoBehaviour
 
     private void Hit(Enemy enemy)
     {
-        if (_isReleased || enemy.Health == null || enemy.Health.IsDead)
+        if (!_game.IsPlaying || !gameObject.activeSelf || enemy.IsDead)
             return;
-        enemy.Health.TakeDamage(_damage);
+
+        enemy.TakeDamage(_damage);
         Despawn();
     }
 
     private void Despawn()
     {
-        if (_isReleased)
+        if (!gameObject.activeSelf)
             return;
-        _isReleased = true;
+
         if (_pool != null)
             _pool.Despawn(this);
         else
+        {
+            gameObject.SetActive(false);
             Destroy(gameObject);
+        }
     }
 
     public class Pool : MonoMemoryPool<Vector3, Quaternion, Bullet>
     {
-        protected override void OnCreated(Bullet bullet)
+        protected override void OnSpawned(Bullet bullet)
         {
-            base.OnCreated(bullet);
             bullet._pool = this;
         }
 
-        protected override void OnSpawned(Bullet bullet) { }
-
         protected override void Reinitialize(Vector3 position, Quaternion rotation, Bullet bullet)
         {
-            bullet.transform.SetPositionAndRotation(position, rotation);
-            bullet.gameObject.SetActive(true);
+            bullet.Initialize(position, rotation);
         }
     }
 }

@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(TweenDeathAnimation))]
+[RequireComponent(typeof(TweenDeathAnimation), typeof(EnemyBehaviour))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField, Min(1)] private int _maxHealth = 50;
@@ -9,112 +10,112 @@ public class Enemy : MonoBehaviour
     [SerializeField] private TweenDeathAnimation _deathAnimation;
 
     private Pool _pool;
-    private Collider[] _colliders;
-    private bool[] _colliderStates;
-    private Rigidbody[] _bodies;
-    private bool[] _kinematicStates;
-    private Animator[] _animators;
-    private bool[] _animatorStates;
-    private bool _isReleased;
+    private EnemyBehaviour _behaviour;
+    private readonly List<Collider> _colliders = new List<Collider>();
+    private readonly List<Animator> _animators = new List<Animator>();
 
     public Health Health { get; private set; }
+    public bool IsDead => Health.IsDead;
 
     private void Awake()
     {
+        _behaviour = GetComponent<EnemyBehaviour>();
+        foreach (Collider collider in GetComponentsInChildren<Collider>(true))
+        {
+            if (collider.enabled)
+                _colliders.Add(collider);
+        }
+
+        foreach (Animator animator in GetComponentsInChildren<Animator>(true))
+        {
+            if (animator.enabled)
+                _animators.Add(animator);
+        }
+
         if (_deathAnimation == null)
             _deathAnimation = GetComponent<TweenDeathAnimation>();
-        _colliders = GetComponentsInChildren<Collider>(true);
-        _colliderStates = new bool[_colliders.Length];
-        for (int i = 0; i < _colliders.Length; i++)
-            _colliderStates[i] = _colliders[i].enabled;
-        _bodies = GetComponentsInChildren<Rigidbody>(true);
-        _kinematicStates = new bool[_bodies.Length];
-        for (int i = 0; i < _bodies.Length; i++)
-            _kinematicStates[i] = _bodies[i].isKinematic;
-        _animators = GetComponentsInChildren<Animator>(true);
-        _animatorStates = new bool[_animators.Length];
-        for (int i = 0; i < _animators.Length; i++)
-            _animatorStates[i] = _animators[i].enabled;
-    }
 
-    private void OnEnable()
-    {
-        _isReleased = false;
-        _deathAnimation.ResetState();
-        for (int i = 0; i < _colliders.Length; i++)
-            _colliders[i].enabled = _colliderStates[i];
-        for (int i = 0; i < _bodies.Length; i++)
-        {
-            _bodies[i].isKinematic = _kinematicStates[i];
-            if (!_bodies[i].isKinematic)
-            {
-                _bodies[i].linearVelocity = Vector3.zero;
-                _bodies[i].angularVelocity = Vector3.zero;
-            }
-        }
-        for (int i = 0; i < _animators.Length; i++)
-        {
-            _animators[i].enabled = _animatorStates[i];
-            if (_animators[i].enabled)
-            {
-                _animators[i].Rebind();
-                _animators[i].Update(0f);
-            }
-        }
         Health = new Health(_maxHealth);
-        Health.Died += HandleDeath;
-        if (_healthView != null)
-        {
-            _healthView.gameObject.SetActive(true);
-            _healthView.Bind(Health);
-        }
+        Health.Died += OnHealthDied;
+        _healthView.Initialize(Health);
     }
 
-    private void HandleDeath()
+    public void Initialize(Vector3 position, Quaternion rotation)
     {
-        if (_healthView != null)
-            _healthView.gameObject.SetActive(false);
-        foreach (Collider collider in _colliders)
-            collider.enabled = false;
-        foreach (Rigidbody body in _bodies)
-            body.isKinematic = true;
-        foreach (Animator animator in _animators)
-            animator.enabled = false;
-        _deathAnimation.Play(Despawn);
+        transform.SetPositionAndRotation(position, rotation);
+        gameObject.SetActive(true);
+
+        Health.Reset();
+        _deathAnimation.ResetState();
+        _healthView.gameObject.SetActive(true);
+        SetCollidersEnabled(true);
+        ResetAnimators();
+        _behaviour.Initialize();
+    }
+
+    public void TakeDamage(int damage)
+    {
+        Health.TakeDamage(damage);
     }
 
     public void Despawn()
     {
-        if (_isReleased)
+        if (!gameObject.activeSelf)
             return;
-        _isReleased = true;
+
         if (_pool != null)
             _pool.Despawn(this);
         else
+        {
+            gameObject.SetActive(false);
             Destroy(gameObject);
+        }
     }
 
-    private void OnDisable()
+    private void OnHealthDied()
+    {
+        _behaviour.Stop();
+        _healthView.gameObject.SetActive(false);
+        SetCollidersEnabled(false);
+
+        foreach (Animator animator in _animators)
+            animator.enabled = false;
+
+        _deathAnimation.Play(Despawn);
+    }
+
+    private void SetCollidersEnabled(bool isEnabled)
+    {
+        foreach (Collider collider in _colliders)
+            collider.enabled = isEnabled;
+    }
+
+    private void ResetAnimators()
+    {
+        foreach (Animator animator in _animators)
+        {
+            animator.enabled = true;
+            animator.Rebind();
+            animator.Update(0f);
+        }
+    }
+
+    private void OnDestroy()
     {
         if (Health != null)
-            Health.Died -= HandleDeath;
+            Health.Died -= OnHealthDied;
     }
 
     public class Pool : MonoMemoryPool<Vector3, Quaternion, Enemy>
     {
-        protected override void OnCreated(Enemy enemy)
+        protected override void OnSpawned(Enemy enemy)
         {
-            base.OnCreated(enemy);
             enemy._pool = this;
         }
 
-        // Activate only after restoring the spawn pose.
-        protected override void OnSpawned(Enemy enemy) { }
-
         protected override void Reinitialize(Vector3 position, Quaternion rotation, Enemy enemy)
         {
-            enemy.transform.SetPositionAndRotation(position, rotation);
-            enemy.gameObject.SetActive(true);
+            enemy.Initialize(position, rotation);
         }
     }
 }

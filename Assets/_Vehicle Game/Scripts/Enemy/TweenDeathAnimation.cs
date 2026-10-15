@@ -11,15 +11,14 @@ public class TweenDeathAnimation : MonoBehaviour
 
     private Sequence _sequence;
     private Vector3 _initialScale;
-    private bool _isInitialized;
+
+    private void Awake()
+    {
+        _initialScale = transform.localScale;
+    }
 
     public void ResetState()
     {
-        if (!_isInitialized)
-        {
-            _initialScale = transform.localScale;
-            _isInitialized = true;
-        }
         _sequence?.Kill();
         _sequence = null;
         transform.localScale = _initialScale;
