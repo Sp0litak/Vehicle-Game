@@ -54,7 +54,7 @@ public class Bullet : MonoBehaviour
     {
         int count = Physics.SphereCastNonAlloc(transform.position, _hitRadius,
             transform.forward, _hits, distance, Physics.DefaultRaycastLayers,
-            QueryTriggerInteraction.Ignore);
+            QueryTriggerInteraction.Collide);
 
         Enemy closestEnemy = null;
         float closestDistance = float.MaxValue;
@@ -74,9 +74,6 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.isTrigger)
-            return;
-
         Enemy enemy = other.GetComponentInParent<Enemy>();
         if (enemy != null)
             Hit(enemy);

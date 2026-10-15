@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4563511657092743270}
   - component: {fileID: 2174613411593925006}
   - component: {fileID: 5249820165864386541}
+  - component: {fileID: 225000000000000001}
   m_Layer: 5
   m_Name: Slider
   m_TagString: Untagged
@@ -50,7 +51,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Slider
   m_Navigation:
     m_Mode: 3
@@ -101,7 +102,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a4353b59cbdc70449b8dac514dd0e81, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Billboard
   _camera: {fileID: 0}
 --- !u!114 &5249820165864386541
@@ -114,9 +115,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8ad9b60e036387c4184efe5347d60cab, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthView
   _slider: {fileID: 4563511657092743270}
+  _canvasGroup: {fileID: 225000000000000001}
 --- !u!1 &447807316332008699
 GameObject:
   m_ObjectHideFlags: 0
@@ -208,7 +210,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -299,7 +301,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
   m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
@@ -367,7 +369,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
@@ -395,10 +397,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
-      propertyPath: m_Name
-      value: Enemy
-      objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.7
@@ -453,7 +451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       propertyPath: m_Name
-      value: stickman
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       propertyPath: m_Avatar
@@ -483,9 +481,6 @@ PrefabInstance:
       addedObject: {fileID: 5241097884916299972}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 4442747885548269120}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 490568518536018400}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       insertIndex: -1
@@ -493,9 +488,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5977019355740914780}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 900000000000000002}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5860936345341707994}
@@ -535,27 +527,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!65 &4442747885548269120
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3336473483477936140}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 6, y: 2, z: 6}
-  m_Center: {x: 0, y: 1, z: 0}
 --- !u!114 &490568518536018400
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -566,11 +537,37 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 576f9c31f2564d049fe080b045fda27a, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
-  _attackDistance: 1.5
-  _attackDamage: 10
-  _attackInterval: 2.6333334
+  _collisionDamage: 10
+  _detectionDistance: 6
+  _stopBehindDistance: 3
+  _despawnDelay: 3
+  _approachSpeedMultiplier: 2
+  _behindSpeedMultiplier: 0.5
+  _speedChangeRate: 2
+--- !u!195 &900000000000000003
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3336473483477936140}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.4
+  m_Speed: 8
+  m_Acceleration: 40
+  avoidancePriority: 50
+  m_AngularSpeed: 720
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 1.8
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!114 &5977019355740914780
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -581,11 +578,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 09329154899ca2e4191fdbd2210c3942, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Enemy
-  _maxHealth: 50
+  _maxHealth: 40
   _healthView: {fileID: 5249820165864386541}
-  _deathAnimation: {fileID: 900000000000000002}
+  _destructionPrefab: {fileID: 114000, guid: 67e67885c2a249f4b6219609a29715c0, type: 3}
 --- !u!54 &5860936345341707994
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -612,7 +609,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 1
   m_Constraints: 80
-  m_CollisionDetection: 1
+  m_CollisionDetection: 3
 --- !u!65 &6313825551634794155
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -628,48 +625,21 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1.6, y: 1.6, z: 1.6}
   m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &900000000000000002
-MonoBehaviour:
+--- !u!225 &225000000000000001
+CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3336473483477936140}
+  m_GameObject: {fileID: 437037368316349114}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0cc78c7ea95244ba83d8a37ab2545aff, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::TweenDeathAnimation
-  _fallDuration: 0.35
-  _holdDuration: 0.15
-  _shrinkDuration: 0.25
-  _fallRotation: {x: 90, y: 0, z: 0}
-
---- !u!195 &900000000000000003
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3336473483477936140}
-  m_Enabled: 0
-  m_AgentTypeID: 0
-  m_Radius: 0.4
-  m_Speed: 6
-  m_Acceleration: 20
-  avoidancePriority: 50
-  m_AngularSpeed: 360
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 1.8
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0

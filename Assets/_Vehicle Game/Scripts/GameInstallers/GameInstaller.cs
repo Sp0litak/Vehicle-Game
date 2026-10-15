@@ -24,6 +24,7 @@ public class GameInstaller : MonoInstaller
 
     private void BindPlayer()
     {
+        Container.Bind<Player>().FromComponentInHierarchy().AsSingle();
         Health health = new Health(100);
         Container.Bind<Health>().FromInstance(health);
         _playerHealthView.Initialize(health);

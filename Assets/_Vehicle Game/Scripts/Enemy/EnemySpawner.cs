@@ -6,14 +6,14 @@ public class EnemySpawner : MonoBehaviour
 {
     [Header("Waves")]
     [SerializeField, Min(1f)] private float _firstWaveDistance = 18f;
-    [SerializeField, Min(1f)] private float _waveSpacing = 14f;
-    [SerializeField, Range(1, 3)] private int _enemiesPerWave = 3;
-    [SerializeField] private int _seed = 42;
+    [SerializeField, Min(1f)] private float _minWaveSpacing = 10f;
+    [SerializeField, Min(1f)] private float _maxWaveSpacing = 22f;
+    [SerializeField, Range(1, 6)] private int _maxEnemiesPerWave = 5;
 
     [Header("Placement")]
     [SerializeField, Min(1f)] private float _spawnAheadDistance = 65f;
     [SerializeField, Min(1f)] private float _despawnBehindDistance = 15f;
-    [SerializeField, Min(0f)] private float _laneSpacing = 2f;
+    [SerializeField, Min(0f)] private float _roadHalfWidth = 2f;
     [SerializeField] private float _groundHeight = 0.025f;
 
     private readonly List<Enemy> _activeEnemies = new List<Enemy>();
@@ -21,7 +21,6 @@ public class EnemySpawner : MonoBehaviour
     private CarMovement _car;
     private GameController _game;
     private LevelNavigation _navigation;
-    private System.Random _random;
     private Vector3 _routeStart;
     private Vector3 _routeDirection;
     private Vector3 _routeRight;
@@ -53,7 +52,6 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        _random = new System.Random(_seed);
         _nextWaveDistance = _firstWaveDistance;
         UpdateSpawns();
     }
@@ -96,6 +94,9 @@ public class EnemySpawner : MonoBehaviour
             if (GetRouteDistance(enemy.transform.position) >= progress - _despawnBehindDistance)
                 continue;
 
+            if (enemy.IsDead || enemy.GetComponent<EnemyBehaviour>().IsWaitingForDespawn)
+                continue;
+
             enemy.Despawn();
             _activeEnemies.RemoveAt(i);
         }
@@ -107,25 +108,32 @@ public class EnemySpawner : MonoBehaviour
         while (_nextWaveDistance <= spawnLimit)
         {
             SpawnWave(_nextWaveDistance);
-            _nextWaveDistance += Mathf.Max(1f, _waveSpacing);
+            float minSpacing = Mathf.Max(1f, _minWaveSpacing);
+            float maxSpacing = Mathf.Max(minSpacing, _maxWaveSpacing);
+            _nextWaveDistance += Random.Range(minSpacing, maxSpacing);
         }
     }
 
     private void SpawnWave(float distance)
     {
-        int firstLane = _random.Next(3);
+        int enemyCount = Random.Range(1, _maxEnemiesPerWave + 1);
+        float spread = Random.Range(1f, 4f);
+        float groupWidth = Random.Range(0.5f, 1f) * _roadHalfWidth;
+        float groupCenter = Random.Range(-_roadHalfWidth + groupWidth, _roadHalfWidth - groupWidth);
         Quaternion rotation = Quaternion.LookRotation(-_routeDirection);
 
-        for (int i = 0; i < _enemiesPerWave; i++)
+        for (int i = 0; i < enemyCount; i++)
         {
-            int lane = (firstLane + i) % 3 - 1;
-            float stagger = (float)_random.NextDouble() * 2f;
-            Vector3 position = _routeStart + _routeDirection * (distance + stagger)
-                + _routeRight * (lane * _laneSpacing);
+            float sideOffset = groupCenter + Random.Range(-groupWidth, groupWidth);
+            Vector3 position = _routeStart + _routeDirection * distance
+                + _routeRight * sideOffset;
             position.y = _groundHeight;
 
-            if (_navigation.TryGetPosition(position, out Vector3 spawnPosition))
+            if (distance < _routeLength - 8f
+                && _navigation.TryGetPosition(position, out Vector3 spawnPosition))
                 _activeEnemies.Add(_pool.Spawn(spawnPosition, rotation));
+
+            distance += Random.Range(1f, spread);
         }
     }
 

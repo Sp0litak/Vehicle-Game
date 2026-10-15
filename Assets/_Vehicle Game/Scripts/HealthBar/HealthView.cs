@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class HealthView : MonoBehaviour
 {
     [SerializeField] private Slider _slider;
+    [SerializeField] private CanvasGroup _canvasGroup;
 
     private Health _health;
 
@@ -23,6 +24,15 @@ public class HealthView : MonoBehaviour
     private void OnHealthChanged(int health)
     {
         _slider.value = health;
+
+        if (health > 0)
+        {
+            _canvasGroup.alpha = 1f;
+        }
+        else
+        {
+            _canvasGroup.alpha = 0f;
+        }
     }
 
     private void OnDestroy()

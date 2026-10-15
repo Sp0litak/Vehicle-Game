@@ -1,18 +1,19 @@
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(TweenDeathAnimation), typeof(EnemyBehaviour))]
+[RequireComponent(typeof(EnemyBehaviour), typeof(Animator))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField, Min(1)] private int _maxHealth = 50;
+    [SerializeField] private int _maxHealth = 50;
     [SerializeField] private HealthView _healthView;
-    [SerializeField] private TweenDeathAnimation _deathAnimation;
+    [SerializeField] private EnemyDestruction _destructionPrefab;
 
     private Pool _pool;
     private EnemyBehaviour _behaviour;
-    private readonly List<Collider> _colliders = new List<Collider>();
-    private readonly List<Animator> _animators = new List<Animator>();
+    private Animator _animator;
+    private SkinnedMeshRenderer _meshRenderer;
+    private Collider[] _colliders;
+    private bool[] _colliderStates;
 
     public Health Health { get; private set; }
     public bool IsDead => Health.IsDead;
@@ -20,20 +21,13 @@ public class Enemy : MonoBehaviour
     private void Awake()
     {
         _behaviour = GetComponent<EnemyBehaviour>();
-        foreach (Collider collider in GetComponentsInChildren<Collider>(true))
-        {
-            if (collider.enabled)
-                _colliders.Add(collider);
-        }
-
-        foreach (Animator animator in GetComponentsInChildren<Animator>(true))
-        {
-            if (animator.enabled)
-                _animators.Add(animator);
-        }
-
-        if (_deathAnimation == null)
-            _deathAnimation = GetComponent<TweenDeathAnimation>();
+        _animator = GetComponent<Animator>();
+        _meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
+        _animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        _colliders = GetComponentsInChildren<Collider>(true);
+        _colliderStates = new bool[_colliders.Length];
+        for (int i = 0; i < _colliders.Length; i++)
+            _colliderStates[i] = _colliders[i].enabled;
 
         Health = new Health(_maxHealth);
         Health.Died += OnHealthDied;
@@ -46,10 +40,10 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(true);
 
         Health.Reset();
-        _deathAnimation.ResetState();
-        _healthView.gameObject.SetActive(true);
-        SetCollidersEnabled(true);
-        ResetAnimators();
+        _meshRenderer.enabled = true;
+        for (int i = 0; i < _colliders.Length; i++)
+            _colliders[i].enabled = _colliderStates[i];
+        ResetAnimator();
         _behaviour.Initialize();
     }
 
@@ -75,29 +69,21 @@ public class Enemy : MonoBehaviour
     private void OnHealthDied()
     {
         _behaviour.Stop();
-        _healthView.gameObject.SetActive(false);
-        SetCollidersEnabled(false);
 
-        foreach (Animator animator in _animators)
-            animator.enabled = false;
-
-        _deathAnimation.Play(Despawn);
-    }
-
-    private void SetCollidersEnabled(bool isEnabled)
-    {
         foreach (Collider collider in _colliders)
-            collider.enabled = isEnabled;
+            collider.enabled = false;
+
+        EnemyDestruction destruction = Instantiate(_destructionPrefab);
+        destruction.SetMesh(_meshRenderer);
+        _meshRenderer.enabled = false;
+        Despawn();
     }
 
-    private void ResetAnimators()
+    private void ResetAnimator()
     {
-        foreach (Animator animator in _animators)
-        {
-            animator.enabled = true;
-            animator.Rebind();
-            animator.Update(0f);
-        }
+        _animator.Rebind();
+        _animator.SetBool("IsDead", false);
+        _animator.Update(0f);
     }
 
     private void OnDestroy()
@@ -115,6 +101,7 @@ public class Enemy : MonoBehaviour
 
         protected override void Reinitialize(Vector3 position, Quaternion rotation, Enemy enemy)
         {
+            enemy._pool = this;
             enemy.Initialize(position, rotation);
         }
     }
