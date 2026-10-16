@@ -1,13 +1,11 @@
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
-
 [RequireComponent(typeof(NavMeshSurface))]
 public class LevelNavigation : MonoBehaviour
 {
     private const float SampleDistance = 0.1f;
     private const float MaxHorizontalOffset = 0.05f;
-
     private NavMeshSurface _surface;
 
     public void Initialize()

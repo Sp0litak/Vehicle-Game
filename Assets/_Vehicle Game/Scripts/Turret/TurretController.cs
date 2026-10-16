@@ -10,7 +10,7 @@ public class TurretController : MonoBehaviour
     [SerializeField, Min(0f)] private float _dragSensitivity = 0.2f;
     [SerializeField] private float _minAngle = -90f;
     [SerializeField] private float _maxAngle = 90f;
-    [FormerlySerializedAs("_fireRate"), SerializeField, Min(0.01f)] private float _fireInterval = 0.2f;
+    [SerializeField, Min(0.01f)] private float _fireInterval = 0.2f;
 
     private Bullet.Pool _bulletPool;
     private GameController _game;

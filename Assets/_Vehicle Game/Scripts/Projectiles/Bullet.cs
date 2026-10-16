@@ -6,7 +6,7 @@ public class Bullet : MonoBehaviour
 {
     [SerializeField, Min(0f)] private float _speed = 30f;
     [SerializeField, Min(1)] private int _damage = 10;
-    [FormerlySerializedAs("_lifeTime"), SerializeField, Min(0.01f)] private float _lifetime = 3f;
+    [SerializeField, Min(0.01f)] private float _lifetime = 3f;
     [SerializeField, Min(0.01f)] private float _hitRadius = 0.1f;
     [SerializeField] private Vector3 _modelRotationOffset;
 
@@ -15,7 +15,7 @@ public class Bullet : MonoBehaviour
     private GameController _game;
     private float _expiresAt;
     private Vector3 _direction;
-    private TrailRenderer[] _trails;
+    private TrailRenderer _trail;
 
     [Inject]
     public void Construct(GameController game)
@@ -25,34 +25,28 @@ public class Bullet : MonoBehaviour
 
     public void Initialize(Vector3 position, Quaternion rotation)
     {
-        if (_trails == null)
-            _trails = GetComponentsInChildren<TrailRenderer>(true);
+        if (_trail == null)
+            _trail = GetComponentInChildren<TrailRenderer>();
 
-        foreach (TrailRenderer trail in _trails)
-            trail.emitting = false;
+        _trail.emitting = false;
 
         _direction = rotation * Vector3.forward;
         transform.SetPositionAndRotation(position, rotation * Quaternion.Euler(_modelRotationOffset));
         _expiresAt = Time.time + _lifetime;
         gameObject.SetActive(true);
 
-        foreach (TrailRenderer trail in _trails)
-        {
-            trail.Clear();
-            trail.emitting = true;
-        }
+        _trail.Clear();
+        _trail.emitting = true;
     }
 
     private void OnDisable()
     {
-        if (_trails == null)
+        if (_trail == null)
             return;
 
-        foreach (TrailRenderer trail in _trails)
-        {
-            trail.emitting = false;
-            trail.Clear();
-        }
+        _trail.emitting = false;
+        _trail.Clear();
+        
     }
 
     private void Update()
