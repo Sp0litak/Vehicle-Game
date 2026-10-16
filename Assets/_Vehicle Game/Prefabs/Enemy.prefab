@@ -506,6 +506,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6313825551634794155}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 900000000000000012}
   m_SourcePrefab: {fileID: 100100000, guid: f75aa4ec6c2a2124ab56bebdfea05363, type: 3}
 --- !u!4 &2667916964974178998 stripped
 Transform:
@@ -551,13 +554,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 576f9c31f2564d049fe080b045fda27a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
-  _collisionDamage: 10
   _detectionDistance: 14
-  _stopBehindDistance: 3
-  _despawnDelay: 3
   _approachSpeedMultiplier: 2
   _behindSpeedMultiplier: 0.5
   _speedChangeRate: 2
+  _collisionDamage: 10
+  _dieOnContact: 1
+  _stopBehindDistance: 3
+  _despawnDelay: 3
 --- !u!195 &900000000000000003
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -643,3 +647,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.6, y: 1.6, z: 1.6}
   m_Center: {x: 0, y: 1, z: 0}
+--- !u!114 &900000000000000012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3336473483477936140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c5fea25214b4e2e9fc6a8c3eb6de753, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyAnimation
+  _animator: {fileID: 5241097884916299972}
+  _movingParameter: HasTarget
+  _deadParameter: IsDead
+  _attackTrigger:

@@ -14,7 +14,7 @@ public class GameResultView : MonoBehaviour
 
     public void Show(bool isWin)
     {
-        if(isWin)
+        if (isWin)
         {
             _resultText.text = _winText;
             _resultText.color = Color.green;

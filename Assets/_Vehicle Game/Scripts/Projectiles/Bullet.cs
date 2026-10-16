@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Serialization;
 using Zenject;
 
 public class Bullet : MonoBehaviour
@@ -46,7 +45,6 @@ public class Bullet : MonoBehaviour
 
         _trail.emitting = false;
         _trail.Clear();
-        
     }
 
     private void Update()

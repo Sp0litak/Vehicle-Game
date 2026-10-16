@@ -1482,8 +1482,8 @@ MonoBehaviour:
   _playerHealthView: {fileID: 1591457954}
   _navigation: {fileID: 1900000041}
   _enemyPrefab: {fileID: 5977019355740914780, guid: e43ddb832a4ee7a4aa6e44a53e1fcb8c, type: 3}
-  _bulletPrefab: {fileID: 4835635197114321085, guid: ea4adb20dbab79b488dfdd37922242a9, type: 3}
   _enemyPoolSize: 24
+  _bulletPrefab: {fileID: 4835635197114321085, guid: ea4adb20dbab79b488dfdd37922242a9, type: 3}
   _bulletPoolSize: 24
 --- !u!114 &1596381095
 MonoBehaviour:
@@ -2151,7 +2151,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b51b82ff793f4a02a6f4238a7248ae71, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RouteProgressView
-  _safeArea: {fileID: 1950000001}
   _progress: {fileID: 1950000014}
   _distance: {fileID: 1950000113}
 --- !u!1 &1950000000

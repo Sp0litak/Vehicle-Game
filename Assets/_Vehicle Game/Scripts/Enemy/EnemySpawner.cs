@@ -4,6 +4,8 @@ using Zenject;
 
 public class EnemySpawner : MonoBehaviour
 {
+    private const float FinishClearance = 8f;
+
     [Header("Waves")]
     [SerializeField, Min(1f)] private float _firstWaveDistance = 18f;
     [SerializeField, Min(1f)] private float _minWaveSpacing = 10f;
@@ -17,26 +19,23 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float _groundHeight = 0.025f;
 
     private readonly List<Enemy> _activeEnemies = new List<Enemy>();
-    private Enemy.Pool _pool;
+    private IEnemyFactory _factory;
     private CarMovement _car;
     private GameController _game;
     private LevelNavigation _navigation;
-    private Vector3 _routeStart;
-    private Vector3 _routeDirection;
-    private Vector3 _routeRight;
-    private float _routeLength;
+    private StraightRoute _route;
     private float _nextWaveDistance;
 
     [Inject]
-    public void Initialize(Enemy.Pool pool, CarMovement car, GameController game, LevelNavigation navigation)
+    public void Construct(IEnemyFactory factory, CarMovement car, GameController game, LevelNavigation navigation)
     {
-        _pool = pool;
+        _factory = factory;
         _car = car;
         _game = game;
         _navigation = navigation;
     }
 
-    private void Start()
+    public void Initialize()
     {
         if (_car.Finish == null)
         {
@@ -45,8 +44,8 @@ public class EnemySpawner : MonoBehaviour
             return;
         }
 
-        InitializeRoute();
-        if (_routeLength < 1f)
+        _route = new StraightRoute(_car.transform.position, _car.Finish.position);
+        if (_route.Length < 1f)
         {
             enabled = false;
             return;
@@ -54,17 +53,6 @@ public class EnemySpawner : MonoBehaviour
 
         _nextWaveDistance = _firstWaveDistance;
         UpdateSpawns();
-    }
-
-    private void InitializeRoute()
-    {
-        _routeStart = _car.transform.position;
-        Vector3 route = _car.Finish.position - _routeStart;
-        route.y = 0f;
-
-        _routeLength = route.magnitude;
-        _routeDirection = route.normalized;
-        _routeRight = Vector3.Cross(Vector3.up, _routeDirection);
     }
 
     private void Update()
@@ -75,7 +63,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void UpdateSpawns()
     {
-        float progress = GetRouteDistance(_car.transform.position);
+        float progress = _route.GetDistance(_car.transform.position);
         RemoveEnemiesBehind(progress);
         SpawnWaves(progress);
     }
@@ -91,10 +79,10 @@ public class EnemySpawner : MonoBehaviour
                 continue;
             }
 
-            if (GetRouteDistance(enemy.transform.position) >= progress - _despawnBehindDistance)
+            if (_route.GetDistance(enemy.transform.position) >= progress - _despawnBehindDistance)
                 continue;
 
-            if (enemy.IsDead || enemy.GetComponent<EnemyBehaviour>().IsWaitingForDespawn)
+            if (enemy.IsDead || enemy.IsRetiring)
                 continue;
 
             enemy.Despawn();
@@ -104,12 +92,12 @@ public class EnemySpawner : MonoBehaviour
 
     private void SpawnWaves(float progress)
     {
-        float spawnLimit = Mathf.Min(progress + _spawnAheadDistance, _routeLength - 8f);
+        float spawnLimit = Mathf.Min(progress + _spawnAheadDistance, _route.Length - FinishClearance);
+        float minSpacing = Mathf.Max(1f, _minWaveSpacing);
+        float maxSpacing = Mathf.Max(minSpacing, _maxWaveSpacing);
         while (_nextWaveDistance <= spawnLimit)
         {
             SpawnWave(_nextWaveDistance);
-            float minSpacing = Mathf.Max(1f, _minWaveSpacing);
-            float maxSpacing = Mathf.Max(minSpacing, _maxWaveSpacing);
             _nextWaveDistance += Random.Range(minSpacing, maxSpacing);
         }
     }
@@ -124,23 +112,17 @@ public class EnemySpawner : MonoBehaviour
         for (int i = 0; i < enemyCount; i++)
         {
             float sideOffset = groupCenter + Random.Range(-groupWidth, groupWidth);
-            Vector3 position = _routeStart + _routeDirection * distance
-                + _routeRight * sideOffset;
+            Vector3 position = _route.GetPosition(distance, sideOffset);
             position.y = _groundHeight;
 
-            if (distance < _routeLength - 8f
+            if (distance < _route.Length - FinishClearance
                 && _navigation.TryGetPosition(position, out Vector3 spawnPosition))
             {
                 Quaternion rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
-                _activeEnemies.Add(_pool.Spawn(spawnPosition, rotation));
+                _activeEnemies.Add(_factory.Spawn(spawnPosition, rotation));
             }
 
             distance += Random.Range(1f, spread);
         }
-    }
-
-    private float GetRouteDistance(Vector3 position)
-    {
-        return Vector3.Dot(position - _routeStart, _routeDirection);
     }
 }

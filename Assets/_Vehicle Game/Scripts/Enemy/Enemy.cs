@@ -1,31 +1,32 @@
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(EnemyBehaviour), typeof(Animator))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private int _maxHealth = 50;
+    [SerializeField, Min(1)] private int _maxHealth = 50;
     [SerializeField] private HealthView _healthView;
     [SerializeField] private EnemyDestruction _destructionPrefab;
 
     private Pool _pool;
-    private EnemyBehaviour _behaviour;
-    private Animator _animator;
+    private IEnemyBehaviour _behaviour;
+    private EnemyAnimation _animation;
     private SkinnedMeshRenderer _meshRenderer;
-    private bool[] _colliderStates;
 
     public Health Health { get; private set; }
     public bool IsDead => Health.IsDead;
+    public bool IsRetiring { get; private set; }
 
     private void Awake()
     {
-        _behaviour = GetComponent<EnemyBehaviour>();
-        _animator = GetComponent<Animator>();
-        _meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
-
         Health = new Health(_maxHealth);
         Health.Died += OnHealthDied;
-        _healthView.Initialize(Health);
+        _behaviour = GetComponent<IEnemyBehaviour>();
+        _animation = GetComponent<EnemyAnimation>();
+        _meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>(true);
+        if (_healthView != null)
+            _healthView.Initialize(Health);
+        if (_animation != null)
+            _animation.Initialize(_behaviour);
     }
 
     public void Initialize(Vector3 position, Quaternion rotation)
@@ -34,14 +35,22 @@ public class Enemy : MonoBehaviour
         gameObject.SetActive(true);
 
         Health.Reset();
-        _meshRenderer.enabled = true;
-        ResetAnimator();
-        _behaviour.Initialize();
+        IsRetiring = false;
+        if (_meshRenderer != null)
+            _meshRenderer.enabled = true;
+        if (_animation != null)
+            _animation.ResetState();
+        _behaviour?.Initialize();
     }
 
     public void TakeDamage(int damage)
     {
         Health.TakeDamage(damage);
+    }
+
+    public void Retire()
+    {
+        IsRetiring = true;
     }
 
     public void Despawn()
@@ -60,19 +69,22 @@ public class Enemy : MonoBehaviour
 
     private void OnHealthDied()
     {
-        _behaviour.Stop();
+        _behaviour?.Stop();
+        if (_animation != null)
+            _animation.PlayDeath();
 
-        EnemyDestruction destruction = Instantiate(_destructionPrefab);
-        destruction.SetMesh(_meshRenderer);
-        _meshRenderer.enabled = false;
+        if (_meshRenderer != null && _destructionPrefab != null)
+        {
+            EnemyDestruction destruction = Instantiate(_destructionPrefab);
+            destruction.SetMesh(_meshRenderer);
+            _meshRenderer.enabled = false;
+        }
         Despawn();
     }
 
-    private void ResetAnimator()
+    private void OnDisable()
     {
-        _animator.Rebind();
-        _animator.SetBool("IsDead", false);
-        _animator.Update(0f);
+        _behaviour?.Stop();
     }
 
     private void OnDestroy()
@@ -90,7 +102,6 @@ public class Enemy : MonoBehaviour
 
         protected override void Reinitialize(Vector3 position, Quaternion rotation, Enemy enemy)
         {
-            enemy._pool = this;
             enemy.Initialize(position, rotation);
         }
     }

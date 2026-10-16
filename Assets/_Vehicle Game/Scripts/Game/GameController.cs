@@ -16,11 +16,14 @@ public class GameController : MonoBehaviour
     public bool IsPlaying { get; private set; }
 
     [Inject]
-    public void Initialize(Health health, CarMovement car)
+    public void Construct(Health health, CarMovement car)
     {
         _health = health;
         _car = car;
+    }
 
+    public void Initialize()
+    {
         _health.Died += OnPlayerDied;
         _car.Finished += OnCarFinished;
         _resultView.Initialize();

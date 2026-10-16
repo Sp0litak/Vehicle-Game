@@ -53,13 +53,7 @@ public class CarMovement : MonoBehaviour
     private void Move()
     {
         if (!_routeInitialized)
-        {
-            _routePosition = _rigidbody.position;
-            _routeDirection = (_finish.position - _routePosition).normalized;
-            _sideDirection = Vector3.Cross(Vector3.up, _routeDirection).normalized;
-            _straightRotation = _rigidbody.rotation;
-            _routeInitialized = true;
-        }
+            InitializeRoute();
 
         _routePosition = Vector3.MoveTowards(
             _routePosition, _finish.position, _speed * Time.fixedDeltaTime);
@@ -69,8 +63,7 @@ public class CarMovement : MonoBehaviour
         float distanceToFinish = Vector3.Distance(_routePosition, _finish.position);
         float zigzagStrength = Mathf.SmoothStep(0f, 1f,
             Mathf.Clamp01(distanceToFinish / _finishStraightenDistance));
-        float sideOffset = Mathf.Sin(_zigzagTime * _zigzagFrequency * Mathf.PI * 2f)
-            * _zigzagWidth * zigzagStrength;
+        float sideOffset = GetSideOffset(zigzagStrength);
 
         Vector3 nextPosition = _routePosition + _sideDirection * sideOffset;
         Vector3 movement = nextPosition - _rigidbody.position;
@@ -80,6 +73,26 @@ public class CarMovement : MonoBehaviour
         if (_routePosition != _finish.position)
             return;
 
+        FinishRoute();
+    }
+
+    private void InitializeRoute()
+    {
+        _routePosition = _rigidbody.position;
+        _routeDirection = (_finish.position - _routePosition).normalized;
+        _sideDirection = Vector3.Cross(Vector3.up, _routeDirection).normalized;
+        _straightRotation = _rigidbody.rotation;
+        _routeInitialized = true;
+    }
+
+    private float GetSideOffset(float strength)
+    {
+        return Mathf.Sin(_zigzagTime * _zigzagFrequency * Mathf.PI * 2f)
+            * _zigzagWidth * strength;
+    }
+
+    private void FinishRoute()
+    {
         _rigidbody.MovePosition(_finish.position);
         _rigidbody.MoveRotation(_straightRotation);
         StopMoving();
