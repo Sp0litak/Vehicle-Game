@@ -1,12 +1,12 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Zenject;
 
 public class RouteProgressView : MonoBehaviour
 {
     [SerializeField] private RectTransform _safeArea;
-    [SerializeField] private RectTransform _fill;
-    [SerializeField] private RectTransform _marker;
+    [SerializeField] private Slider _progress;
     [SerializeField] private TMP_Text _distance;
 
     private CarMovement _car;
@@ -25,7 +25,7 @@ public class RouteProgressView : MonoBehaviour
     private void Start()
     {
         if (_car == null || _car.Finish == null || _safeArea == null
-            || _fill == null || _marker == null || _distance == null)
+            || _progress == null || _distance == null)
         {
             Debug.LogError("RouteProgressView requires a car, finish and scene UI references.", this);
             enabled = false;
@@ -50,8 +50,7 @@ public class RouteProgressView : MonoBehaviour
         _safeArea.anchorMax = new Vector2(safe.xMax / Screen.width, safe.yMax / Screen.height);
         float traveled = Mathf.Clamp(Vector3.Dot(_car.transform.position - _start, _direction), 0f, _length);
         float progress = _length > 0.001f ? traveled / _length : 1f;
-        _fill.anchorMax = new Vector2(1f, progress);
-        _marker.anchorMin = _marker.anchorMax = new Vector2(0.5f, progress);
+        _progress.normalizedValue = progress;
         int meters = Mathf.CeilToInt(_length - traveled);
         if (meters == _lastMeters)
             return;
