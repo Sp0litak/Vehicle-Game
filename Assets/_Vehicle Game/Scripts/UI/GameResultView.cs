@@ -1,18 +1,20 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class GameResultView : MonoBehaviour
 {
-    [SerializeField] private Text _resultText;
+    [SerializeField] private TMP_Text _resultText;
+    [SerializeField] private string _winText;
+    [SerializeField] private string _loseText;
 
     public void Initialize()
     {
-        _resultText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
-        _resultText.text = string.Empty;
+        _resultText.enabled = false;
     }
 
     public void Show(bool isWin)
     {
-        _resultText.text = isWin ? "You win" : "You lose";
+        _resultText.text = isWin ? _winText : _loseText;
+        _resultText.enabled = true;
     }
 }

@@ -552,7 +552,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyBehaviour
   _collisionDamage: 10
-  _detectionDistance: 8
+  _detectionDistance: 14
   _stopBehindDistance: 3
   _despawnDelay: 3
   _approachSpeedMultiplier: 2
