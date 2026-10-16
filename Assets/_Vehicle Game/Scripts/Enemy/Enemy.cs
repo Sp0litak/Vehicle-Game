@@ -12,7 +12,6 @@ public class Enemy : MonoBehaviour
     private EnemyBehaviour _behaviour;
     private Animator _animator;
     private SkinnedMeshRenderer _meshRenderer;
-    private Collider[] _colliders;
     private bool[] _colliderStates;
 
     public Health Health { get; private set; }
@@ -23,11 +22,6 @@ public class Enemy : MonoBehaviour
         _behaviour = GetComponent<EnemyBehaviour>();
         _animator = GetComponent<Animator>();
         _meshRenderer = GetComponentInChildren<SkinnedMeshRenderer>();
-        _animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
-        _colliders = GetComponentsInChildren<Collider>(true);
-        _colliderStates = new bool[_colliders.Length];
-        for (int i = 0; i < _colliders.Length; i++)
-            _colliderStates[i] = _colliders[i].enabled;
 
         Health = new Health(_maxHealth);
         Health.Died += OnHealthDied;
@@ -41,8 +35,6 @@ public class Enemy : MonoBehaviour
 
         Health.Reset();
         _meshRenderer.enabled = true;
-        for (int i = 0; i < _colliders.Length; i++)
-            _colliders[i].enabled = _colliderStates[i];
         ResetAnimator();
         _behaviour.Initialize();
     }
@@ -69,9 +61,6 @@ public class Enemy : MonoBehaviour
     private void OnHealthDied()
     {
         _behaviour.Stop();
-
-        foreach (Collider collider in _colliders)
-            collider.enabled = false;
 
         EnemyDestruction destruction = Instantiate(_destructionPrefab);
         destruction.SetMesh(_meshRenderer);

@@ -1665,9 +1665,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   _firstWaveDistance: 12
-  _minWaveSpacing: 10
-  _maxWaveSpacing: 15
-  _maxEnemiesPerWave: 5
+  _minWaveSpacing: 8
+  _maxWaveSpacing: 9
+  _maxEnemiesPerWave: 3
   _spawnAheadDistance: 65
   _despawnBehindDistance: 15
   _roadHalfWidth: 2

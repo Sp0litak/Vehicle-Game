@@ -15,6 +15,7 @@ public class Bullet : MonoBehaviour
     private GameController _game;
     private float _expiresAt;
     private Vector3 _direction;
+    private TrailRenderer[] _trails;
 
     [Inject]
     public void Construct(GameController game)
@@ -24,10 +25,34 @@ public class Bullet : MonoBehaviour
 
     public void Initialize(Vector3 position, Quaternion rotation)
     {
+        if (_trails == null)
+            _trails = GetComponentsInChildren<TrailRenderer>(true);
+
+        foreach (TrailRenderer trail in _trails)
+            trail.emitting = false;
+
         _direction = rotation * Vector3.forward;
         transform.SetPositionAndRotation(position, rotation * Quaternion.Euler(_modelRotationOffset));
         _expiresAt = Time.time + _lifetime;
         gameObject.SetActive(true);
+
+        foreach (TrailRenderer trail in _trails)
+        {
+            trail.Clear();
+            trail.emitting = true;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (_trails == null)
+            return;
+
+        foreach (TrailRenderer trail in _trails)
+        {
+            trail.emitting = false;
+            trail.Clear();
+        }
     }
 
     private void Update()

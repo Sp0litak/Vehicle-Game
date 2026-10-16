@@ -14,7 +14,16 @@ public class GameResultView : MonoBehaviour
 
     public void Show(bool isWin)
     {
-        _resultText.text = isWin ? _winText : _loseText;
+        if(isWin)
+        {
+            _resultText.text = _winText;
+            _resultText.color = Color.green;
+        }
+        else
+        {
+            _resultText.text = _loseText;
+            _resultText.color = Color.red;
+        }
         _resultText.enabled = true;
     }
 }
